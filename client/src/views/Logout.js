@@ -1,7 +1,25 @@
-export default function Logout() {
+import {  Navigate } from "react-router-dom";
+import React, { useState , useEffect } from 'react';
+
+const Logout = () => {
+  const [redirect, setRedirect] = useState(false);
+
+  useEffect(() => {
+   localStorage.removeItem('user');
+   setRedirect(true);
+  });
+
+  const renderRedirect = () => {
+    if (redirect) {
+      return <Navigate to='/login' />
+    }
+  }
+
   return (
-    <main style={{ padding: "1rem 0" }}>
-      <h2>Logout</h2>
-    </main>
+    <div>
+      {renderRedirect()}
+    </div>
   );
-}
+};
+
+export default Logout;

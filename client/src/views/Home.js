@@ -55,7 +55,21 @@ const Home = () => {
   );
 
   const onCreate = (values) => {
-    console.log('Received values of form: ', values);
+    const data = {
+      'list' : values.list,
+      'type' : values.type,
+      'amount' : values.amount,
+      'date' : values.date.format('YYYY/MM/DD'),
+      'user' : localStorage.getItem('user')
+    }
+    axios.post(UrlApi('save'), data)
+      .then(res => {
+        if(res.data.result === "success"){
+          console.log(res.data.result)
+        }else{ 
+          console.log("false")
+        }
+    })
     setVisible(false);
   };
 

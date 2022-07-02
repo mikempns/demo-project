@@ -1,6 +1,4 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Form, Input } from 'antd';
-import { Link , Navigate } from "react-router-dom";
+import {  Navigate } from "react-router-dom";
 import React, { useState , useEffect } from 'react';
 
 const App = () => {

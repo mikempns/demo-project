@@ -4,6 +4,7 @@ const api = (props) => {
     switch(props){
        case 'login' : return path+"auth/login";
        case 'register' : return path+"auth/register";
+       case 'save' : return path+"manage/save"
         default : return path;
     }
 }

@@ -1,22 +1,9 @@
-import { Button, Form, Input, Modal, Radio ,DatePicker,Space ,TimePicker  } from 'antd';
-import { useState } from 'react';
+import { Form, Input, Modal, Radio ,DatePicker } from 'antd';
 import moment from 'moment';
 
   const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
   const [form] = Form.useForm();
   const dateFormat = 'YYYY/MM/DD';
-  
-
-
-  const config = {
-    rules: [
-      {
-        type: 'object',
-        required: true,
-        message: 'Please select time!',
-      },
-    ],
-  };
   
   return (
     <div>
@@ -30,15 +17,8 @@ import moment from 'moment';
         form
           .validateFields()
           .then((values) => {
-            const data = {
-                'list' : values.list,
-                'type' : values.type,
-                'amount' : values.amount,
-                'date' : values.date.format('YYYY/MM/DD')
-            } 
             form.resetFields();
-            onCreate(data);
-            
+            onCreate(values);
           })
           .catch((info) => {
             console.log('Validate Failed:', info);
@@ -88,8 +68,17 @@ import moment from 'moment';
         >
           <Input />
         </Form.Item>
-        <Form.Item name="date" label="DatePicker" {...config}>
-        <DatePicker />
+        <Form.Item 
+        name="date" 
+        label="DatePicker" 
+        rules={[
+          {
+            type: 'object',
+            required: true,
+            message: 'Please select time!',
+          },
+        ]}>
+        <DatePicker defaultValue={moment(moment().format(dateFormat), dateFormat)}/>
       </Form.Item>
       </Form>
     </Modal>
