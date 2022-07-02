@@ -1,0 +1,119 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Quicksand', sans-serif;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -150px;
+  margin-left: -250px;
+}
+
+.login-form {
+  width: 500px;
+}
+.login-form-forgot {
+  float: right;
+}
+.ant-col-rtl .login-form-forgot {
+  float: left;
+}
+.login-form-button {
+  width: 100%;
+}
+
+.radius {
+  border-radius: 20px !important;
+}
+
+.card {
+  border-radius: 20px !important;
+}
+.card-body .form-icon {
+  text-align: center;
+  width: 100%;
+  line-height: 0;
+  margin-top: calc(-42px - 35px);
+  margin-bottom: 28px;
+}
+.form-icon .icon-holder {
+  position: relative;
+  display: inline-block;
+  width: 85px;
+  height: 85px;
+  border-radius: 85px;
+  background-color: #292828;
+  padding: 20px;
+  margin-top: 15px;
+}
+.icon-holder img {
+  position: absolute;
+  width: 50%;
+  top: 50%;
+  left: 50%;
+  margin-top: -23%;
+  margin-left: -25%;
+}
+input:hover {
+  border-bottom: 1px solid #292828;
+}
+#imageAsBackground {
+  z-index: -1;
+  position: fixed;
+  top: 50%;
+  right: -1%;
+  transform: translateY(-50%);
+  max-height: 600px;
+}
+a:hover {
+  text-decoration: none;
+}
+.form-control:focus {
+  border-color: #292828;
+  box-shadow: none;
+}
+
+.form-control.is-invalid {
+  background-image: none;
+}
+.form-control.is-invalid:focus {
+  box-shadow: 0 3px 2px -2px red;
+}
+
+.site-layout-content {
+  min-height: 280px;
+  padding: 24px;
+  background: #fff;
+}
+#components-layout-demo-top .logo {
+  float: left;
+  width: 120px;
+  height: 31px;
+  margin: 16px 24px 16px 0;
+  background: rgba(255, 255, 255, 0.3);
+}
+.ant-row-rtl #components-layout-demo-top .logo {
+  float: right;
+  margin: 16px 0 16px 24px;
+}
+
+.layout{
+  margin: 0;
+  padding: 0;
+}
+
+.site-form-item-icon{
+  font-size: 24px;
+  color: white;
+}
+
+.icon-dropdown{
+  float: right;
+}
