@@ -19,4 +19,13 @@ router.post('/save', async (req, res) => {
     });
   });
 
+router.post('/getCashBookByUser', async (req, res) => {
+    const { user } = req.body;
+    const data = await CashBook.find({user:user});
+    res.status(200);
+    res.json({
+      data
+    });
+  });
+
 module.exports = router;

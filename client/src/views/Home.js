@@ -5,6 +5,7 @@ import React, { useState, useEffect} from 'react';
 import UrlApi from '../Url_api';
 import axios from 'axios';
 import CollectionCreateForm from '../component/CollectionCreateForm';
+import TableView from '../component/TableView';
 
 const Home = () => {
   const [redirect, setRedirect] = useState(false);
@@ -14,7 +15,7 @@ const Home = () => {
 
   useEffect(() => {
     var user = localStorage.getItem('user');
-    setUser(user);
+    setUser(user);   
    });
 
   const onFinish = (values) => {
@@ -87,7 +88,7 @@ const Home = () => {
   
      
     </Header>
-    <Content style={{ padding: '0 50px' }}>
+    <Content id="content" style={{ padding: '0 60px' }}>
     <div>
       <Button
         type="primary"
@@ -105,9 +106,11 @@ const Home = () => {
         }}
       />
     </div>
-      <div className="site-layout-content">Content</div>
+      <div className="site-layout-content">
+      <TableView/>
+      </div>
     </Content>
-    <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+    <Footer id="footer" style={{ textAlign: 'center'}}>Ant Design ©2018 Created by Ant UED</Footer>
   </Layout>
   );
 };

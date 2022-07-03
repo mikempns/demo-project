@@ -29,9 +29,6 @@ import moment from 'moment';
         form={form}
         layout="vertical"
         name="form_in_modal"
-        initialValues={{
-          modifier: 'public',
-        }}
       >
         <Form.Item
           name="list"
@@ -71,6 +68,7 @@ import moment from 'moment';
         <Form.Item 
         name="date" 
         label="DatePicker" 
+        initialValue={moment()}
         rules={[
           {
             type: 'object',
@@ -78,7 +76,7 @@ import moment from 'moment';
             message: 'Please select time!',
           },
         ]}>
-        <DatePicker defaultValue={moment(moment().format(dateFormat), dateFormat)}/>
+        <DatePicker format={dateFormat}/>
       </Form.Item>
       </Form>
     </Modal>

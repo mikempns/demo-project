@@ -5,6 +5,7 @@ const api = (props) => {
        case 'login' : return path+"auth/login";
        case 'register' : return path+"auth/register";
        case 'save' : return path+"manage/save"
+       case 'getCashBookByUser' : return path+"manage/getCashBookByUser"
         default : return path;
     }
 }
