@@ -1,108 +1,62 @@
-import { Form, InputNumber, Popconfirm, Table, Typography, Input } from 'antd';
+import { Form, Table } from 'antd';
 import { useState, useEffect } from 'react';
 import { CheckOutlined } from '@ant-design/icons';
 import UrlApi from '../Url_api';
 import axios from 'axios';
 
-const EditableCell = ({
-  editing,
-  dataIndex,
-  title,
-  inputType,
-  record,
-  index,
-  children,
-  ...restProps
-}) => {
-  const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
-  return (
-    <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{
-            margin: 0,
-          }}
-          rules={[
-            {
-              required: true,
-              message: `Please Input ${title}!`,
-            },
-          ]}
-        >
-          {inputNode}
-        </Form.Item>
-      ) : (
-        children
-      )}
-    </td>
-  );
-};
-
-const TableView = ({}) => {
+const TableView = ({chooseDay , dataChange , select}) => {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
-  const [editingKey, setEditingKey] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [loadData, setLoadData] = useState(true);
-  const isEditing = (record) => record.key === editingKey;
+  const [oldChooseDay, setOldChooseDay] = useState()
 
   useEffect(() => {
     var user = localStorage.getItem('user');
-    if(loadData){
+    if(oldChooseDay !== chooseDay){
+      setLoading(true);
+      setLoadData(true);
+      setOldChooseDay(chooseDay);
+    }
+    if(loadData || dataChange){
       axios.post(UrlApi('getCashBookByUser'), {'user': user})
       .then(res => {
         const originData = [];
+        let a = 1;
         for (let i = 0; i < res.data.data.length ; i++) {
-          originData.push({
-            item: i.toString(),
-            list: res.data.data[i].list,
-            Income: res.data.data[i].type === "Income" ? <CheckOutlined color='green'/> : "",
-            Expense: res.data.data[i].type === "Expense" ? <CheckOutlined /> : "",
-            amount: res.data.data[i].amount,
-          });
+          if(select !== 'All'){
+            if(res.data.data[i].date === chooseDay && res.data.data[i].type === select){
+              originData.push({
+                item: a,
+                list: res.data.data[i].list,
+                Income: res.data.data[i].type === "Income" ? <CheckOutlined /> : "",
+                Expense: res.data.data[i].type === "Expense" ? <CheckOutlined /> : "",
+                amount: res.data.data[i].amount,
+              });
+              a++;
+            }
+          }else{
+            if(res.data.data[i].date === chooseDay){
+              originData.push({
+                item: a,
+                list: res.data.data[i].list,
+                Income: res.data.data[i].type === "Income" ? <CheckOutlined /> : "",
+                Expense: res.data.data[i].type === "Expense" ? <CheckOutlined /> : "",
+                amount: res.data.data[i].amount,
+              });
+              a++;
+            }
+          }
+          
+         
         }
+        setLoading(false);
         setData(originData);
       });
       setLoadData(false);
     }
     
    });
-
-  const edit = (record) => {
-    form.setFieldsValue({
-      name: '',
-      age: '',
-      address: '',
-      ...record,
-    });
-    setEditingKey(record.key);
-  };
-
-  const cancel = () => {
-    setEditingKey('');
-  };
-
-  const save = async (key) => {
-    try {
-      const row = await form.validateFields();
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
-
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, { ...item, ...row });
-        setData(newData);
-        setEditingKey('');
-      } else {
-        newData.push(row);
-        setData(newData);
-        setEditingKey('');
-      }
-    } catch (errInfo) {
-      console.log('Validate Failed:', errInfo);
-    }
-  };
 
   const columns = [
     {
@@ -115,7 +69,6 @@ const TableView = ({}) => {
       title: 'name',
       dataIndex: 'list',
       width: '40%',
-      editable: true,
       align: 'center'
     },
     {
@@ -125,14 +78,12 @@ const TableView = ({}) => {
           title: 'Income',
           dataIndex: 'Income',
           width: 150,
-          editable: true,
           align: 'center'
         },
         {
           title: 'Expense',
           dataIndex: 'Expense',
           width: 150,
-          editable: true,
           align: 'center'
         },
       ],
@@ -141,69 +92,19 @@ const TableView = ({}) => {
       title: 'amount (THB.)',
       dataIndex: 'amount',
       width: '15%',
-      editable: true,
       align: 'center'
     },
-    {
-      title: 'operation',
-      dataIndex: 'operation',
-      align: 'center',
-      render: (_, record) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span>
-            <Typography.Link
-              onClick={() => save(record.key)}
-              style={{
-                marginRight: 8,
-              }}
-            >
-              Save
-            </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
-            </Popconfirm>
-          </span>
-        ) : (
-          <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-            Edit
-          </Typography.Link>
-        );
-      },
-    },
   ];
-  const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
 
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        inputType: col.dataIndex === 'amount' ? 'number' : 'text',
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  });
   return (
     <Form form={form} component={false}>
       <Table
-        components={{
-          body: {
-            cell: EditableCell,
-          },
-        }}
         loading={loading}
         size="small"
         dataSource={data}
-        columns={mergedColumns}
+        columns={columns}
         rowClassName="editable-row"
-        pagination={{
-          onChange: cancel,
-        }}
+        rowKey="item"
       />
     </Form>
   );

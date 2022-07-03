@@ -1,7 +1,8 @@
 import { UserOutlined ,LogoutOutlined } from '@ant-design/icons';
-import { Button, Form, Input , Breadcrumb, Layout , Dropdown, Menu, Space} from 'antd';
-import { Link , Navigate } from "react-router-dom";
+import { Button, Layout , Dropdown, Menu, Space, DatePicker, Select } from 'antd';
+import { Link } from "react-router-dom";
 import React, { useState, useEffect} from 'react';
+import moment from 'moment';
 import UrlApi from '../Url_api';
 import axios from 'axios';
 import CollectionCreateForm from '../component/CollectionCreateForm';
@@ -12,34 +13,22 @@ const Home = () => {
   const [user, setUser] = useState();
   const { Header, Content, Footer } = Layout;
   const [visible, setVisible] = useState(false);
+  const [dataChange, setDataChange] = useState(false);
+  const dateFormat = 'YYYY/MM/DD';
+  const today = moment().format(dateFormat);
+  const [day, setDay] = useState(today);
+  const [select, setSelect] = useState('All');
+  const { Option } = Select;
 
   useEffect(() => {
     var user = localStorage.getItem('user');
-    setUser(user);   
+    setUser(user);
    });
 
-  const onFinish = (values) => {
-    axios.post(UrlApi('login'), values)
-    .then(res => {
-      if(res.data.result === "true"){
-        localStorage.setItem('user', values.username);
-        setRedirect(true)
-        //console.log("true")
-      }else{ 
-        //console.log("false")
-      }
-    })
+  const handleChange = (value) => {
+    setSelect(value);
+    setDataChange(true);
   };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
-  
-  const renderRedirect = () => {
-    if (redirect) {
-      return <Navigate to='/' />
-    }
-  }
 
   const menu = (
     <Menu
@@ -72,7 +61,12 @@ const Home = () => {
         }
     })
     setVisible(false);
+    setDataChange(true);
   };
+
+  const handleDatePickerChange = (date, dateString, id) => {
+    setDay(dateString);
+ }
 
   return (
     <Layout className="layout">
@@ -89,7 +83,7 @@ const Home = () => {
      
     </Header>
     <Content id="content" style={{ padding: '0 60px' }}>
-    <div>
+      <div className="site-layout-content">
       <Button
         type="primary"
         onClick={() => {
@@ -105,9 +99,19 @@ const Home = () => {
           setVisible(false);
         }}
       />
-    </div>
-      <div className="site-layout-content">
-      <TableView/>
+      <Select
+      defaultValue="All"
+      style={{
+        width: 120,
+      }}
+      onChange={handleChange}
+    >
+      <Option value="All">All</Option>
+      <Option value="Income">Income</Option>
+      <Option value="Expense">Expense</Option>
+    </Select>
+      <DatePicker format={dateFormat} defaultValue={moment()} onChange={(date ,dateString) => handleDatePickerChange(date,dateString,1)}/>
+      <TableView chooseDay={day} dataChange={dataChange} select={select}/>
       </div>
     </Content>
     <Footer id="footer" style={{ textAlign: 'center'}}>Ant Design ©2018 Created by Ant UED</Footer>
