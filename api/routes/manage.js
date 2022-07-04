@@ -28,4 +28,22 @@ router.post('/getCashBookByUser', async (req, res) => {
     });
   });
 
+router.put('/editCashBookByUser/:id', async (req, res) => {
+    const payload = req.body;
+    const { id } = req.params;
+    const data = await CashBook.findByIdAndUpdate(id, { $set: payload });
+    res.status(200);
+    res.json({
+      result: 'success',
+      data
+    });
+  });
+
+router.delete('/deleteCashBook/:id', async (req, res) => {
+    const { id } = req.params;
+  
+    await CashBook.findByIdAndDelete(id);
+    res.status(204).end;
+  });
+
 module.exports = router;

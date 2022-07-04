@@ -18,6 +18,8 @@ const Home = () => {
   const today = moment().format(dateFormat);
   const [day, setDay] = useState(today);
   const [select, setSelect] = useState('All');
+  const [mode, setMode] = useState();
+  const [dataEdit, setDateEdit] = useState([]);
   const { Option } = Select;
 
   useEffect(() => {
@@ -44,24 +46,77 @@ const Home = () => {
     />
   );
 
-  const onCreate = (values) => {
-    const data = {
-      'list' : values.list,
-      'type' : values.type,
-      'amount' : values.amount,
-      'date' : values.date.format('YYYY/MM/DD'),
-      'user' : localStorage.getItem('user')
+  const onCreate = (values,id) => {
+    if(mode === 'Add'){
+      const data = {
+        'list' : values.list,
+        'type' : values.type,
+        'amount' : values.amount,
+        'date' : values.date.format('YYYY/MM/DD'),
+        'user' : localStorage.getItem('user')
+      }
+      axios.post(UrlApi('save'), data)
+        .then(res => {
+          if(res.data.result === "success"){
+            setVisible(false);
+            setMode('');
+            setDataChange(true);
+          }else{ 
+            console.log("false")
+          }
+      })
+    }else if(mode === 'Edit'){
+      const data = {
+        'list' : values.list,
+        'type' : values.type,
+        'amount' : values.amount,
+        'date' : values.date.format('YYYY/MM/DD'),
+        'user' : localStorage.getItem('user')
+      }
+      axios.put(UrlApi('editCashBookByUser')+id, data)
+        .then(res => {
+          if(res.data.result === "success"){
+            setVisible(false);
+            setDateEdit([]);
+            setMode('');
+            setDataChange(true);
+          }else{ 
+            console.log("false")
+          }
+      })
+      
     }
-    axios.post(UrlApi('save'), data)
-      .then(res => {
-        if(res.data.result === "success"){
-          console.log(res.data.result)
-        }else{ 
-          console.log("false")
-        }
-    })
-    setVisible(false);
-    setDataChange(true);
+  };
+
+  const deleteItem = (id) => {
+    axios.delete(UrlApi('deleteCashBook')+id)
+        .then(res => {
+          if(res.status === 204){
+            setVisible(false);
+            setDateEdit([]);
+            setMode('');
+            setDataChange(true);
+          }else{ 
+            console.log("false")
+          }
+      })
+  };
+  
+  const onChangeFormTableView = (values) => {
+    setDataChange(values)
+  };
+
+  const editFormTableView = (values) => {
+    setMode('Edit');
+    const data = {
+      'id': values.id,
+      'list': values.list,
+      'type': values.Income !== '' ? 'Income' : 'Expense',
+      'amount': values.amount,
+      'date': day
+    }
+    setDateEdit(data);
+    setVisible(true);
   };
 
   const handleDatePickerChange = (date, dateString, id) => {
@@ -87,16 +142,22 @@ const Home = () => {
       <Button
         type="primary"
         onClick={() => {
+          setMode('Add');
           setVisible(true);
         }}
       >
         Add
       </Button>
       <CollectionCreateForm
+        mode={mode}
+        dataEdit={dataEdit}
         visible={visible}
+        deleteItem={deleteItem}
         onCreate={onCreate}
         onCancel={() => {
           setVisible(false);
+          setDateEdit([]);
+          setMode('');
         }}
       />
       <Select
@@ -111,7 +172,7 @@ const Home = () => {
       <Option value="Expense">Expense</Option>
     </Select>
       <DatePicker format={dateFormat} defaultValue={moment()} onChange={(date ,dateString) => handleDatePickerChange(date,dateString,1)}/>
-      <TableView chooseDay={day} dataChange={dataChange} select={select}/>
+      <TableView chooseDay={day} dataChange={dataChange} select={select} onChangeFormTableView={onChangeFormTableView} editFormTableView={editFormTableView}/>
       </div>
     </Content>
     <Footer id="footer" style={{ textAlign: 'center'}}>Ant Design ©2018 Created by Ant UED</Footer>

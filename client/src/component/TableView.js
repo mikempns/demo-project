@@ -4,7 +4,7 @@ import { CheckOutlined } from '@ant-design/icons';
 import UrlApi from '../Url_api';
 import axios from 'axios';
 
-const TableView = ({chooseDay , dataChange , select}) => {
+const TableView = ({chooseDay , dataChange , select , onChangeFormTableView ,editFormTableView}) => {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,6 +28,7 @@ const TableView = ({chooseDay , dataChange , select}) => {
             if(res.data.data[i].date === chooseDay && res.data.data[i].type === select){
               originData.push({
                 item: a,
+                id:res.data.data[i]._id,
                 list: res.data.data[i].list,
                 Income: res.data.data[i].type === "Income" ? <CheckOutlined /> : "",
                 Expense: res.data.data[i].type === "Expense" ? <CheckOutlined /> : "",
@@ -39,6 +40,7 @@ const TableView = ({chooseDay , dataChange , select}) => {
             if(res.data.data[i].date === chooseDay){
               originData.push({
                 item: a,
+                id:res.data.data[i]._id,
                 list: res.data.data[i].list,
                 Income: res.data.data[i].type === "Income" ? <CheckOutlined /> : "",
                 Expense: res.data.data[i].type === "Expense" ? <CheckOutlined /> : "",
@@ -53,6 +55,7 @@ const TableView = ({chooseDay , dataChange , select}) => {
         setLoading(false);
         setData(originData);
       });
+      onChangeFormTableView(false);
       setLoadData(false);
     }
     
@@ -99,6 +102,11 @@ const TableView = ({chooseDay , dataChange , select}) => {
   return (
     <Form form={form} component={false}>
       <Table
+      onRow={(record) => {
+        return {
+          onClick: event => {editFormTableView(record)},
+        };
+      }}
         loading={loading}
         size="small"
         dataSource={data}
