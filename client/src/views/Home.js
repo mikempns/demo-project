@@ -7,6 +7,7 @@ import UrlApi from '../Url_api';
 import axios from 'axios';
 import CollectionCreateForm from '../component/CollectionCreateForm';
 import TableView from '../component/TableView';
+import CardItem from '../component/CardItem';
 
 const Home = () => {
   const [redirect, setRedirect] = useState(false);
@@ -138,13 +139,18 @@ const Home = () => {
      
     </Header>
     <Content id="content" style={{ padding: '0 60px' }}>
+      <div id='CardItem'>
+        <CardItem/>
+      </div>
       <div className="site-layout-content">
+      <div className='content-top'>
       <Button
         type="primary"
         onClick={() => {
           setMode('Add');
           setVisible(true);
         }}
+        style={{marginRight:30}}
       >
         Add
       </Button>
@@ -160,10 +166,12 @@ const Home = () => {
           setMode('');
         }}
       />
+      
       <Select
       defaultValue="All"
       style={{
         width: 120,
+        marginRight:30
       }}
       onChange={handleChange}
     >
@@ -172,10 +180,11 @@ const Home = () => {
       <Option value="Expense">Expense</Option>
     </Select>
       <DatePicker format={dateFormat} defaultValue={moment()} onChange={(date ,dateString) => handleDatePickerChange(date,dateString,1)}/>
+      </div>
       <TableView chooseDay={day} dataChange={dataChange} select={select} onChangeFormTableView={onChangeFormTableView} editFormTableView={editFormTableView}/>
       </div>
     </Content>
-    <Footer id="footer" style={{ textAlign: 'center'}}>Ant Design ©2018 Created by Ant UED</Footer>
+    <Footer id="footer" style={{ textAlign: 'center',marginTop:101}}>Ant Design ©2018 Created by Ant UED</Footer>
   </Layout>
   );
 };

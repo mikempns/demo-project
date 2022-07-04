@@ -7,6 +7,14 @@ import axios from 'axios';
 
 const Register = () => {
   const [redirect, setRedirect] = useState(false);
+
+  const tailLayout = {
+    wrapperCol: {
+      offset: 8,
+      span: 16,
+    },
+  };
+  
   const onFinish = (values) => {
     axios.post(UrlApi('register'), values)
     .then(res => {
@@ -29,6 +37,10 @@ const Register = () => {
       return <Navigate to='/' />
     }
   }
+
+  const onCancel = () => {
+    setRedirect(true)
+  };
 
   return (
     <div className="App">
@@ -63,11 +75,14 @@ const Register = () => {
             placeholder="Password"
           />
         </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit" className="login-form-button">
-            Register
-          </Button>
-        </Form.Item>
+        <Form.Item {...tailLayout}>
+        <Button type="primary" htmlType="submit" style={{marginRight:30}}>
+        Register
+        </Button>
+        <Button htmlType="button" onClick={onCancel}>
+        Cancel
+        </Button>
+      </Form.Item>
       </Form>
     </div>
   );

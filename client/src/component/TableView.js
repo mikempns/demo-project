@@ -10,6 +10,8 @@ const TableView = ({chooseDay , dataChange , select , onChangeFormTableView ,edi
   const [loading, setLoading] = useState(true);
   const [loadData, setLoadData] = useState(true);
   const [oldChooseDay, setOldChooseDay] = useState()
+  const [income, setIncome] = useState();
+  const [expense, setExpense] = useState();
 
   useEffect(() => {
     var user = localStorage.getItem('user');
@@ -23,14 +25,22 @@ const TableView = ({chooseDay , dataChange , select , onChangeFormTableView ,edi
       .then(res => {
         const originData = [];
         let a = 1;
+        var income = 0;
+        var expense = 0;
         for (let i = 0; i < res.data.data.length ; i++) {
           if(select !== 'All'){
             if(res.data.data[i].date === chooseDay && res.data.data[i].type === select){
+              if(res.data.data[i].type === "Income"){
+                income+=res.data.data[i].amount;
+              }
+              if(res.data.data[i].type === "Expense"){
+                  expense+=res.data.data[i].amount;
+              }
               originData.push({
                 item: a,
                 id:res.data.data[i]._id,
                 list: res.data.data[i].list,
-                Income: res.data.data[i].type === "Income" ? <CheckOutlined /> : "",
+                Income: res.data.data[i].type === "Income" ?   <CheckOutlined /> : "",
                 Expense: res.data.data[i].type === "Expense" ? <CheckOutlined /> : "",
                 amount: res.data.data[i].amount,
               });
@@ -38,6 +48,12 @@ const TableView = ({chooseDay , dataChange , select , onChangeFormTableView ,edi
             }
           }else{
             if(res.data.data[i].date === chooseDay){
+              if(res.data.data[i].type === "Income"){
+                income+=res.data.data[i].amount;
+              }
+              if(res.data.data[i].type === "Expense"){
+                  expense+=res.data.data[i].amount;
+              }
               originData.push({
                 item: a,
                 id:res.data.data[i]._id,
@@ -49,9 +65,9 @@ const TableView = ({chooseDay , dataChange , select , onChangeFormTableView ,edi
               a++;
             }
           }
-          
-         
         }
+        setIncome(income);
+        setExpense(expense);
         setLoading(false);
         setData(originData);
       });
@@ -113,6 +129,14 @@ const TableView = ({chooseDay , dataChange , select , onChangeFormTableView ,edi
         columns={columns}
         rowClassName="editable-row"
         rowKey="item"
+        summary={() => (
+          <Table.Summary fixed>
+            <Table.Summary.Row>
+              <Table.Summary.Cell index={0}>Summary</Table.Summary.Cell>
+              <Table.Summary.Cell index={1}>Income  {income}  bath  Expense  {expense}   bath</Table.Summary.Cell>
+            </Table.Summary.Row>
+          </Table.Summary>
+        )}  
       />
     </Form>
   );
